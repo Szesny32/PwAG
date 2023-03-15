@@ -24,7 +24,7 @@ void CALLBACK Render(void)
     glFinish();
 }
 
-int main(int argc, CHAR* argv[])
+int _main(int argc, CHAR* argv[])
 {
     auxInitDisplayMode(AUX_SINGLE + AUX_RGBA);
     auxInitPosition(100, 100, 400, 400);
