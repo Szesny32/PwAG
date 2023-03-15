@@ -19,7 +19,7 @@ void display(void)
     glFinish();
 }
 
-int main(int argc, CHAR* argv[])
+int _main(int argc, CHAR* argv[])
 {
     glutInitWindowSize(400, 300);
     glutInitWindowPosition(100, 100);
