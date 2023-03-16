@@ -23,7 +23,7 @@ using namespace std;
 static float zMove = 0.0; 
 static float xRot = 0.0;
 static float yRot = 0.0;
-static unsigned int texture[2]; // indeksy tekstur.
+static unsigned int texture[5]; // indeksy tekstur.
 
 const GLfloat black[] = { 0.0f, 0.0f, 0.0f, 1.0f };
 const GLfloat white[] = { 1.0f, 1.0f, 1.0f, 1.0f };
@@ -88,12 +88,14 @@ BitMapFile *getBMPData(string filename)
 void loadExternalTextures()			
 {
    
-   BitMapFile *image[2];
+   BitMapFile *image[5];
 
    // Zaladownie tekstu z plikow.
    image[0] = getBMPData("Textures/grass.bmp");
    image[1] = getBMPData("Textures/sky.bmp");
-   
+   image[2] = getBMPData("Textures/top.bmp");
+   image[3] = getBMPData("Textures/side.bmp");
+   image[4] = getBMPData("Textures/bottom.bmp");
    
    //tekstura grass 
    glBindTexture(GL_TEXTURE_2D, texture[0]); 
@@ -112,7 +114,34 @@ void loadExternalTextures()
    
    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, image[1]->sizeX, image[1]->sizeY, 0, GL_RGB, GL_UNSIGNED_BYTE, image[1]->data);	
    
-   
+
+
+
+   glBindTexture(GL_TEXTURE_2D, texture[2]);
+   //ToDo - ustawienie parametrow tekstury glTexParametri 
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, image[2]->sizeX, image[2]->sizeY, 0, GL_RGB, GL_UNSIGNED_BYTE, image[2]->data);
+
+
+   glBindTexture(GL_TEXTURE_2D, texture[3]);
+   //ToDo - ustawienie parametrow tekstury glTexParametri 
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, image[3]->sizeX, image[3]->sizeY, 0, GL_RGB, GL_UNSIGNED_BYTE, image[3]->data);
+
+   glBindTexture(GL_TEXTURE_2D, texture[4]);
+   //ToDo - ustawienie parametrow tekstury glTexParametri 
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, image[4]->sizeX, image[4]->sizeY, 0, GL_RGB, GL_UNSIGNED_BYTE, image[4]->data);
+
 }
 
 
@@ -142,7 +171,7 @@ void setup(void)
    
    glEnable(GL_LIGHTING); //To trzeba wlaczyc!!!
    //Tekstury
-   glGenTextures(2, texture);
+   glGenTextures(5, texture);
 
    loadExternalTextures();
 
@@ -206,45 +235,104 @@ void drawScene()
    glEnable(GL_TEXTURE_2D); 
    //ToDo - obsluga tekstury dla szescianu
 
+
+
+
    float s = 1.0;
-   
+  glEnable(GL_TEXTURE_2D);
+  glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+
+  glBindTexture(GL_TEXTURE_2D, texture[3]);
   glBegin(GL_QUADS);
 	 //Sciana przednia
-     glVertex3f(-s, -s,  s);	 
-	 glVertex3f( s, -s,  s);	
-	 glVertex3f( s,  s,  s);	
-	 glVertex3f(-s,  s,  s);	
-   	
-	 //Sciana tylna 
-	 glVertex3f(-s, -s, -s);	
-	 glVertex3f(-s,  s, -s);	
-	 glVertex3f( s,  s, -s);	
-	 glVertex3f( s, -s, -s);	
-	
-	 //Sciana gorna
-	 glVertex3f(-s,  s, -s);	
-	 glVertex3f(-s,  s,  s);	
-	 glVertex3f( s,  s,  s);	
-	 glVertex3f( s,  s, -s);	
-	
-	 //Sciana dolna
-	 glVertex3f(-s, -s, -s);	
-	 glVertex3f( s, -s, -s);	
-	 glVertex3f( s, -s,  s);	
-	 glVertex3f(-s, -s,  s);	
-	 
-	 //Prawa sciana
-	 glVertex3f( s, -s, -s);	
-	 glVertex3f( s,  s, -s);	
-	 glVertex3f( s,  s,  s);	
-	 glVertex3f( s, -s,  s);	
-	
-	 //Lewa sciana
-	 glVertex3f(-s, -s, -s);	
-	 glVertex3f(-s, -s,  s);	
-	 glVertex3f(-s,  s,  s);	
-	 glVertex3f(-s,  s, -s);	
-  glEnd();
+		glTexCoord2f(0.0, 0.0);
+		glVertex3f(-s, -s,  s);	
+
+		glTexCoord2f(1.0, 0.0);
+		glVertex3f( s, -s,  s);
+
+		glTexCoord2f(1.0, 1.0);
+		glVertex3f( s,  s,  s);	
+
+		glTexCoord2f(0.0, 1.0);
+		glVertex3f(-s,  s,  s);	
+	glEnd();
+
+	glBindTexture(GL_TEXTURE_2D, texture[3]);
+	glBegin(GL_QUADS);
+		 //Sciana tylna 
+		glTexCoord2f(0.0, 0.0);
+		glVertex3f(-s, -s, -s);	
+
+		glTexCoord2f(0.0, 1.0);
+		glVertex3f(-s,  s, -s);
+
+		glTexCoord2f(1.0, 1.0);
+		glVertex3f( s,  s, -s);
+
+		glTexCoord2f(1.0, 0.0);
+		glVertex3f( s, -s, -s);	
+	glEnd();
+	glBindTexture(GL_TEXTURE_2D, texture[2]);
+	glBegin(GL_QUADS);
+		 //Sciana gorna
+		glTexCoord2f(0.0, 1.0);
+		glVertex3f(-s,  s, -s);
+
+		glTexCoord2f(1.0, 1.0);
+		glVertex3f(-s,  s,  s);	
+
+		glTexCoord2f(1.0, 0.0);
+		glVertex3f( s,  s,  s);
+
+		glTexCoord2f(0.0, 0.0);
+		glVertex3f( s,  s, -s);	
+	 glEnd();
+	 glBindTexture(GL_TEXTURE_2D, texture[4]);
+	 glBegin(GL_QUADS);
+		 //Sciana dolna
+		glTexCoord2f(0.0, 1.0);
+		glVertex3f(-s, -s, -s);
+
+		glTexCoord2f(1.0, 1.0);
+		glVertex3f( s, -s, -s);
+
+		glTexCoord2f(1.0, 0.0);
+		glVertex3f( s, -s,  s);	
+
+		glTexCoord2f(0.0, 0.0);
+		glVertex3f(-s, -s,  s);	
+	 glEnd();
+	 glBindTexture(GL_TEXTURE_2D, texture[3]);
+	 glBegin(GL_QUADS);
+		 //Prawa sciana
+		glTexCoord2f(1.0, 0.0);
+		glVertex3f( s, -s, -s);	
+
+		glTexCoord2f(1.0, 1.0);
+		glVertex3f( s,  s, -s);
+
+		glTexCoord2f(0.0, 1.0);
+		glVertex3f( s,  s,  s);
+
+		glTexCoord2f(0.0, 0.0);
+		glVertex3f( s, -s,  s);	
+	 glEnd();
+	 glBindTexture(GL_TEXTURE_2D, texture[3]);
+	glBegin(GL_QUADS);
+		 //Lewa sciana
+		glTexCoord2f(0.0, 0.0);
+		glVertex3f(-s, -s, -s);	
+
+		glTexCoord2f(1.0, 0.0);
+		glVertex3f(-s, -s,  s);
+
+		glTexCoord2f(1.0, 1.0);
+		glVertex3f(-s,  s,  s);
+
+		glTexCoord2f(0.0, 1.0);
+		glVertex3f(-s,  s, -s);	
+	glEnd();
 
   //ToDo - dodac sfere z nalozona tekstutra
   glDisable(GL_TEXTURE_2D);
