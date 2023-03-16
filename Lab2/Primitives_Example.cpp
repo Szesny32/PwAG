@@ -47,16 +47,24 @@ void DrawScene(GLfloat xRot, GLfloat yRot)
 
     glRotatef(xRot, 1.0f, 0.0f, 0.0f);
     glRotatef(yRot, 0.0f, 1.0f, 0.0f);
+	
+	glLineStipple(0.5f, 1.0f);
+	glEnable(GL_LINE_STIPPLE);
 
-	//glBegin(GL_LINES);
-	//	glColor3f(1,1,1);
-	//	glVertex3f(10,0,0);
-	//	glVertex3f(-10,0,0);
-	//	glVertex3f(0,10,0);
-	//	glVertex3f(0,-10,0);
-	//	glVertex3f(0,0,10);
-	//	glVertex3f(0,0,-10);
-	//glEnd();
+
+	glBegin(GL_LINES);
+		glColor3f(1,1,1);
+		glVertex3f(10,0,0);
+		glVertex3f(-10,0,0);
+		glVertex3f(0,10,0);
+		glVertex3f(0,-10,0);
+		glVertex3f(0,0,10);
+		glVertex3f(0,0,-10);
+	glEnd();
+
+	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	glShadeModel(GL_SMOOTH);
+	
 
 	//glBegin(GL_QUADS);
 	//	glColor3f(0,1,0);
@@ -71,7 +79,8 @@ void DrawScene(GLfloat xRot, GLfloat yRot)
 	//	glVertex3f(3,3,5);
 	//	glVertex3f(3,-3,5);
 	//glEnd();
-
+	glLineWidth(10.0f);
+	glEnable(GL_LINE_SMOOTH);
 	glBegin(GL_QUADS);
 		drawPoint(Black);
 		drawPoint(Blue);
@@ -123,7 +132,6 @@ void SetMyPixelFormat(HDC hdc)
 void ResizeWindow(int width, int height)
 {
 
-
 	if (height*width==0) return;
 	glViewport(0,0,width,height);
 	glMatrixMode(GL_PROJECTION);
@@ -138,17 +146,19 @@ void ResizeWindow(int width, int height)
 
 	glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
-	//glEnable(GL_DEPTH_TEST); TO BY£O
+	glEnable(GL_DEPTH_TEST);
 	//glEnable(GL_CULL_FACE);
 
-	//+
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+	//glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 	glEnable(GL_BLEND);
 	glEnable(GL_LINE_SMOOTH);
-	glShadeModel(GL_SMOOTH);
 
+
+	//glCullFace(GL_BACK);
+	//glEdgeFlag(true);
 
 }
+
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	PAINTSTRUCT ps;
