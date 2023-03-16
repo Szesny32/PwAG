@@ -1,0 +1,15 @@
+[WIGGLE]
+glaux\include;$(IncludePath)
+glaux\lib;$(LibraryPath)
+opengl32.lib;%(AdditionalDependencies)
+
+[GLUT]
+glut-3.7.6-bin;$(LibraryPath)
+glut-3.7.6-bin;$(LibraryPath)
+glut32.lib;%(AdditionalDependencies)
+
+[GLAUX]
+glaux\include;$(IncludePath)
+glaux\lib;$(LibraryPath)
+legacy_stdio_definitions.lib;glaux.lib;opengl32.lib;glu32.lib;%(AdditionalDependencies)
+
