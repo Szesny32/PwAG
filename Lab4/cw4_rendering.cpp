@@ -29,10 +29,12 @@ const GLfloat black[] = { 0.0f, 0.0f, 0.0f, 1.0f };
 const GLfloat white[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 const GLfloat yellow[] = { 1.0f, 1.0f, 0.0f, 1.0f };
 const GLfloat red[] = { 1.0f, 0.0f, 0.0f, 1.0f };
+const GLfloat ambient_red[] = { 0.1f, 0.0f, 0.0f, 1.0f };
 const GLfloat shininess[] = { 30.0f};
-const GLfloat directionalLight[] = {0.0f, 5.0f, 0.0f, 0.0f};
+const GLfloat directionalLight[] = {0.0f, 5.0f, 5.0f, 0.0f};
 const GLfloat pointLight[] = { 5.0f, 5.0f, -10.0f, 1.0f };
-
+void drawCube();
+void setMaterial(const GLfloat* ambient, const GLfloat* diffuse, const GLfloat* specular, const GLfloat* emission, const GLfloat* shiniess);
 
 // Struktura dla pliku bitmapy.
 struct BitMapFile
@@ -156,7 +158,7 @@ void setup(void)
 
    //glLightModelfv();
 
-   glLightfv(GL_LIGHT0, GL_AMBIENT, red);
+   glLightfv(GL_LIGHT0, GL_AMBIENT, ambient_red);
    glLightfv(GL_LIGHT0, GL_DIFFUSE, white);
    glLightfv(GL_LIGHT0, GL_SPECULAR, black);
    glLightfv(GL_LIGHT0, GL_POSITION, directionalLight);
@@ -199,11 +201,7 @@ void drawScene()
    glTranslatef(1.5, 0.0, zMove); 
 
    //ToDo - ustawic parametry materialu dla sfery - czerwona z rozblyskiem
-
-
-
-
-   glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, red);
+   glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, ambient_red);
    glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, red);
    glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, white);
    glMaterialfv(GL_FRONT, GL_EMISSION, black);
@@ -226,7 +224,7 @@ void drawScene()
 	glPopMatrix();
 
 
-
+	
 
 
    glTranslatef(-2.5, 0.0, 0.0); 
@@ -237,102 +235,18 @@ void drawScene()
 
 
 
+   //glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, ambient_red);
+   //glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, red);
+   //glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, white);
+   //glMaterialfv(GL_FRONT, GL_EMISSION, black);
+   //glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, shininess);
 
-   float s = 1.0;
-  glEnable(GL_TEXTURE_2D);
+   //GL_AMBIENT, GL_DIFFUSE, GL_SPECULAR, GL_EMISSION, GL_SHININESS
+   setMaterial(ambient_red, red, white, black, shininess);
+
   glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 
-  glBindTexture(GL_TEXTURE_2D, texture[3]);
-  glBegin(GL_QUADS);
-	 //Sciana przednia
-		glTexCoord2f(0.0, 0.0);
-		glVertex3f(-s, -s,  s);	
-
-		glTexCoord2f(1.0, 0.0);
-		glVertex3f( s, -s,  s);
-
-		glTexCoord2f(1.0, 1.0);
-		glVertex3f( s,  s,  s);	
-
-		glTexCoord2f(0.0, 1.0);
-		glVertex3f(-s,  s,  s);	
-	glEnd();
-
-	glBindTexture(GL_TEXTURE_2D, texture[3]);
-	glBegin(GL_QUADS);
-		 //Sciana tylna 
-		glTexCoord2f(0.0, 0.0);
-		glVertex3f(-s, -s, -s);	
-
-		glTexCoord2f(0.0, 1.0);
-		glVertex3f(-s,  s, -s);
-
-		glTexCoord2f(1.0, 1.0);
-		glVertex3f( s,  s, -s);
-
-		glTexCoord2f(1.0, 0.0);
-		glVertex3f( s, -s, -s);	
-	glEnd();
-	glBindTexture(GL_TEXTURE_2D, texture[2]);
-	glBegin(GL_QUADS);
-		 //Sciana gorna
-		glTexCoord2f(0.0, 1.0);
-		glVertex3f(-s,  s, -s);
-
-		glTexCoord2f(1.0, 1.0);
-		glVertex3f(-s,  s,  s);	
-
-		glTexCoord2f(1.0, 0.0);
-		glVertex3f( s,  s,  s);
-
-		glTexCoord2f(0.0, 0.0);
-		glVertex3f( s,  s, -s);	
-	 glEnd();
-	 glBindTexture(GL_TEXTURE_2D, texture[4]);
-	 glBegin(GL_QUADS);
-		 //Sciana dolna
-		glTexCoord2f(0.0, 1.0);
-		glVertex3f(-s, -s, -s);
-
-		glTexCoord2f(1.0, 1.0);
-		glVertex3f( s, -s, -s);
-
-		glTexCoord2f(1.0, 0.0);
-		glVertex3f( s, -s,  s);	
-
-		glTexCoord2f(0.0, 0.0);
-		glVertex3f(-s, -s,  s);	
-	 glEnd();
-	 glBindTexture(GL_TEXTURE_2D, texture[3]);
-	 glBegin(GL_QUADS);
-		 //Prawa sciana
-		glTexCoord2f(1.0, 0.0);
-		glVertex3f( s, -s, -s);	
-
-		glTexCoord2f(1.0, 1.0);
-		glVertex3f( s,  s, -s);
-
-		glTexCoord2f(0.0, 1.0);
-		glVertex3f( s,  s,  s);
-
-		glTexCoord2f(0.0, 0.0);
-		glVertex3f( s, -s,  s);	
-	 glEnd();
-	 glBindTexture(GL_TEXTURE_2D, texture[3]);
-	glBegin(GL_QUADS);
-		 //Lewa sciana
-		glTexCoord2f(0.0, 0.0);
-		glVertex3f(-s, -s, -s);	
-
-		glTexCoord2f(1.0, 0.0);
-		glVertex3f(-s, -s,  s);
-
-		glTexCoord2f(1.0, 1.0);
-		glVertex3f(-s,  s,  s);
-
-		glTexCoord2f(0.0, 1.0);
-		glVertex3f(-s,  s, -s);	
-	glEnd();
+  drawCube();
 
   //ToDo - dodac sfere z nalozona tekstutra
   glDisable(GL_TEXTURE_2D);
@@ -385,4 +299,81 @@ int main(int argc, char **argv)
    glutMainLoop();
    
    return 0;
+}
+
+
+
+void drawCube() {
+
+	GLfloat s = 1.0f;
+
+	//Sciana przednia
+	glBindTexture(GL_TEXTURE_2D, texture[3]);
+	glBegin(GL_QUADS);
+		glNormal3d(0, 0, 1);
+		glTexCoord2f(0.0, 0.0); glVertex3f(-s, -s, s);
+		glTexCoord2f(1.0, 0.0); glVertex3f(s, -s, s);
+		glTexCoord2f(1.0, 1.0); glVertex3f(s, s, s);
+		glTexCoord2f(0.0, 1.0); glVertex3f(-s, s, s);
+	glEnd();
+
+	//Sciana tylna 
+	glBindTexture(GL_TEXTURE_2D, texture[3]);
+	glBegin(GL_QUADS);
+		glNormal3d(0, 0, -1);
+		glTexCoord2f(0.0, 0.0); glVertex3f(-s, -s, -s);
+		glTexCoord2f(0.0, 1.0); glVertex3f(-s, s, -s);
+		glTexCoord2f(1.0, 1.0); glVertex3f(s, s, -s);
+		glTexCoord2f(1.0, 0.0); glVertex3f(s, -s, -s);
+	glEnd();
+
+	//Sciana gorna
+	glBindTexture(GL_TEXTURE_2D, texture[2]);
+	glBegin(GL_QUADS);
+		glNormal3d(0, 1, 0);
+		glTexCoord2f(0.0, 1.0); glVertex3f(-s, s, -s);
+		glTexCoord2f(1.0, 1.0); glVertex3f(-s, s, s);
+		glTexCoord2f(1.0, 0.0); glVertex3f(s, s, s);
+		glTexCoord2f(0.0, 0.0); glVertex3f(s, s, -s);
+	glEnd();
+
+	//Sciana dolna
+	glBindTexture(GL_TEXTURE_2D, texture[4]);
+	glBegin(GL_QUADS);
+		glNormal3d(0, -1, 0);
+		glTexCoord2f(0.0, 1.0); glVertex3f(-s, -s, -s);
+		glTexCoord2f(1.0, 1.0); glVertex3f(s, -s, -s);
+		glTexCoord2f(1.0, 0.0); glVertex3f(s, -s, s);
+		glTexCoord2f(0.0, 0.0); glVertex3f(-s, -s, s);
+	glEnd();
+
+	//Prawa sciana
+	glBindTexture(GL_TEXTURE_2D, texture[3]);
+	glBegin(GL_QUADS);
+		glNormal3d(1, 0, 0);
+		glTexCoord2f(1.0, 0.0); glVertex3f(s, -s, -s);
+		glTexCoord2f(1.0, 1.0); glVertex3f(s, s, -s);
+		glTexCoord2f(0.0, 1.0); glVertex3f(s, s, s);
+		glTexCoord2f(0.0, 0.0); glVertex3f(s, -s, s);
+	glEnd();
+
+	//Lewa sciana
+	glBindTexture(GL_TEXTURE_2D, texture[3]);
+	glBegin(GL_QUADS);
+		glNormal3d(-1, 0, 0);
+		glTexCoord2f(0.0, 0.0); glVertex3f(-s, -s, -s);
+		glTexCoord2f(1.0, 0.0); glVertex3f(-s, -s, s);
+		glTexCoord2f(1.0, 1.0); glVertex3f(-s, s, s);
+		glTexCoord2f(0.0, 1.0); glVertex3f(-s, s, -s);
+	glEnd();
+
+}
+
+
+void setMaterial(const GLfloat* ambient, const GLfloat* diffuse, const GLfloat* specular, const GLfloat* emission, const GLfloat* shiniess) {
+	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, ambient);
+	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, diffuse);
+	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, specular);
+	glMaterialfv(GL_FRONT, GL_EMISSION, emission);
+	glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, shiniess);
 }
