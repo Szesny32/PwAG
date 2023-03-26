@@ -27,11 +27,11 @@ static unsigned int texture[5]; // indeksy tekstur.
 
 const GLfloat black[] = { 0.0f, 0.0f, 0.0f, 1.0f };
 const GLfloat white[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-const GLfloat grey[] = { 0.2f, 0.2f, 0.2f, 1.0f };
-
+const GLfloat grey[] = { 0.9f, 0.9f, 0.9f, 1.0f };
+const GLfloat dark_grey[] = { 0.1f, 0.1f, 0.1f, 1.0f };
 const GLfloat yellow[] = { 1.0f, 1.0f, 0.0f, 1.0f };
 const GLfloat light_yellow[] = { 0.1f, 0.1f, 0.0f, 1.0f };
-
+const GLfloat dark_grey2[] = { 0.05f, 0.05f, 0.05f, 1.0f };
 const GLfloat red[] = { 1.0f, 0.0f, 0.0f, 1.0f };
 const GLfloat light_red[] = { 0.05f, 0.0f, 0.0f, 1.0f };
 const GLfloat dark_red[] = { 0.8f, 0.0f, 0.0f, 1.0f };
@@ -235,7 +235,7 @@ void drawScene()
 	glEnable(GL_TEXTURE_2D); 
 		//ToDo - obsluga tekstury dla szescianu
 		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-		setMaterial(light_red, red, black, black, shininess); //GL_AMBIENT, GL_DIFFUSE, GL_SPECULAR, GL_EMISSION, GL_SHININESS
+		setMaterial(dark_grey, red, black, black, shininess); //GL_AMBIENT, GL_DIFFUSE, GL_SPECULAR, GL_EMISSION, GL_SHININESS
 		drawCube();
 
 		//ToDo - dodac sfere z nalozona tekstutra
@@ -246,7 +246,7 @@ void drawScene()
 		glEnable(GL_TEXTURE_GEN_T);
 
 			glTranslatef(-1.5f,2.5f, 1.0f);
-			setMaterial(grey, white, black, black, shininess); //GL_AMBIENT, GL_DIFFUSE, GL_SPECULAR, GL_EMISSION, GL_SHININESS
+			setMaterial(dark_grey, grey, black, black, shininess); //GL_AMBIENT, GL_DIFFUSE, GL_SPECULAR, GL_EMISSION, GL_SHININESS
 			glBindTexture(GL_TEXTURE_2D, texture[1]);
 			glutSolidSphere(1, 100, 100);
 		
