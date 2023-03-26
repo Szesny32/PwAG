@@ -9,7 +9,7 @@
 //--> ustawic uwzglednianie oswietlenia na teksturze 
 // - dodaæ obiekt sfery reprezentujacy punktowe zrodlo swiatla (zrodlo swiatla numer 1)
 //- dodaæ sfere z nalozona tekstur¹ 
-
+#include <windows.h>
 #include <iostream>
 #include <fstream>
 
@@ -27,12 +27,22 @@ static unsigned int texture[5]; // indeksy tekstur.
 
 const GLfloat black[] = { 0.0f, 0.0f, 0.0f, 1.0f };
 const GLfloat white[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+const GLfloat grey[] = { 0.2f, 0.2f, 0.2f, 1.0f };
+
 const GLfloat yellow[] = { 1.0f, 1.0f, 0.0f, 1.0f };
+const GLfloat light_yellow[] = { 0.1f, 0.1f, 0.0f, 1.0f };
+
 const GLfloat red[] = { 1.0f, 0.0f, 0.0f, 1.0f };
-const GLfloat ambient_red[] = { 0.1f, 0.0f, 0.0f, 1.0f };
+const GLfloat light_red[] = { 0.05f, 0.0f, 0.0f, 1.0f };
+const GLfloat dark_red[] = { 0.8f, 0.0f, 0.0f, 1.0f };
+
+
 const GLfloat shininess[] = { 30.0f};
-const GLfloat directionalLight[] = {0.0f, 5.0f, 5.0f, 0.0f};
-const GLfloat pointLight[] = { 5.0f, 5.0f, -10.0f, 1.0f };
+GLfloat directionalLight[] = { 10.0f, 10.0f, 0.0f, 0.0f};
+GLfloat pointLight[] = { 5.0f, 5.0f, -10.0f, 1.0f };
+
+bool lightMode = 1;
+
 void drawCube();
 void setMaterial(const GLfloat* ambient, const GLfloat* diffuse, const GLfloat* specular, const GLfloat* emission, const GLfloat* shiniess);
 
@@ -109,7 +119,12 @@ void loadExternalTextures()
 
    //tekstura sky
    glBindTexture(GL_TEXTURE_2D, texture[1]);
-     
+   glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+   glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+   glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+   glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+   glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_SPHERE_MAP);
+   glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_SPHERE_MAP);
 
    //ToDo - ustawienie parametrow tekstury glTexParametri 
 
@@ -158,17 +173,17 @@ void setup(void)
 
    //glLightModelfv();
 
-   glLightfv(GL_LIGHT0, GL_AMBIENT, ambient_red);
-   glLightfv(GL_LIGHT0, GL_DIFFUSE, white);
-   glLightfv(GL_LIGHT0, GL_SPECULAR, black);
    glLightfv(GL_LIGHT0, GL_POSITION, directionalLight);
+   glLightfv(GL_LIGHT0, GL_AMBIENT, grey);
+   glLightfv(GL_LIGHT0, GL_DIFFUSE, red);
+   glLightfv(GL_LIGHT0, GL_SPECULAR, black);
    glEnable(GL_LIGHT0);
 
 
-   glLightfv(GL_LIGHT1, GL_AMBIENT, yellow);
+   glLightfv(GL_LIGHT1, GL_POSITION, pointLight);
+   glLightfv(GL_LIGHT1, GL_AMBIENT, white);
    glLightfv(GL_LIGHT1, GL_DIFFUSE, black);
    glLightfv(GL_LIGHT1, GL_SPECULAR, white);
-   glLightfv(GL_LIGHT1, GL_POSITION, pointLight);
    glEnable(GL_LIGHT1);
    
    glEnable(GL_LIGHTING); //To trzeba wlaczyc!!!
@@ -186,7 +201,7 @@ void setup(void)
 //Rysowanie sceny
 void drawScene()
 {  
-     
+
    glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
    glLoadIdentity();
 
@@ -201,58 +216,46 @@ void drawScene()
    glTranslatef(1.5, 0.0, zMove); 
 
    //ToDo - ustawic parametry materialu dla sfery - czerwona z rozblyskiem
-   glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, ambient_red);
-   glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, red);
-   glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, white);
-   glMaterialfv(GL_FRONT, GL_EMISSION, black);
-   glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, shininess);
-
+   setMaterial(light_red, red, white, black, shininess); //GL_AMBIENT, GL_DIFFUSE, GL_SPECULAR, GL_EMISSION, GL_SHININESS
    glutSolidSphere(1.25, 100, 100);
 
-    //ToDo - dodac sfere reprezentujaca polozenie swiatla punktowego o numerze 1 
-   //ToDo - zdefiniowac material dla swiecacej sfery (GL_EMISSION)
-
-   glPushMatrix();
-   glLoadIdentity();
-	   glTranslatef(pointLight[0], pointLight[1], pointLight[2]);
-	   glMaterialfv(GL_FRONT, GL_AMBIENT, black);
-	   glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, black);
-	   glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, black);
-	   glMaterialfv(GL_FRONT, GL_EMISSION, white);
-	  // glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, shininess);
-	  glutSolidSphere(0.5, 100, 100);
+    
+   
+	//ToDo - dodac sfere reprezentujaca polozenie swiatla punktowego o numerze 1 
+	//ToDo - zdefiniowac material dla swiecacej sfery (GL_EMISSION)
+	glPushMatrix();
+		glLoadIdentity();
+		glTranslatef(pointLight[0], pointLight[1], pointLight[2]);
+		setMaterial(yellow, black, black, yellow, shininess); //GL_AMBIENT, GL_DIFFUSE, GL_SPECULAR, GL_EMISSION, GL_SHININESS
+		glutSolidSphere(0.5, 100, 100);
 	glPopMatrix();
 
 
+	glTranslatef(-5.0, 0.0, 0.0); 
+	glEnable(GL_TEXTURE_2D); 
+		//ToDo - obsluga tekstury dla szescianu
+		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+		setMaterial(light_red, red, black, black, shininess); //GL_AMBIENT, GL_DIFFUSE, GL_SPECULAR, GL_EMISSION, GL_SHININESS
+		drawCube();
+
+		//ToDo - dodac sfere z nalozona tekstutra
+		
+		
+
+		glEnable(GL_TEXTURE_GEN_S);
+		glEnable(GL_TEXTURE_GEN_T);
+
+			glTranslatef(-1.5f,2.5f, 1.0f);
+			setMaterial(grey, white, black, black, shininess); //GL_AMBIENT, GL_DIFFUSE, GL_SPECULAR, GL_EMISSION, GL_SHININESS
+			glBindTexture(GL_TEXTURE_2D, texture[1]);
+			glutSolidSphere(1, 100, 100);
+		
+			glDisable(GL_TEXTURE_GEN_S);
+			glDisable(GL_TEXTURE_GEN_T);
 	
+			glDisable(GL_TEXTURE_2D);
 
-
-   glTranslatef(-2.5, 0.0, 0.0); 
-   
- 
-   glEnable(GL_TEXTURE_2D); 
-   //ToDo - obsluga tekstury dla szescianu
-
-
-
-   //glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, ambient_red);
-   //glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, red);
-   //glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, white);
-   //glMaterialfv(GL_FRONT, GL_EMISSION, black);
-   //glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, shininess);
-
-   //GL_AMBIENT, GL_DIFFUSE, GL_SPECULAR, GL_EMISSION, GL_SHININESS
-   setMaterial(ambient_red, red, white, black, shininess);
-
-  glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-
-  drawCube();
-
-  //ToDo - dodac sfere z nalozona tekstutra
-  glDisable(GL_TEXTURE_2D);
-
-  
-   glutSwapBuffers();
+	glutSwapBuffers();
 }
 
 
@@ -279,6 +282,7 @@ void specialKeyInput(int key, int x, int y)
 	if (xRot < -1.0f) xRot = 355.0f;
 	if (yRot > 356.0f) yRot = 0.0f;
 	if (yRot < -1.0f) yRot = 355.0f;
+
    glutPostRedisplay();
 }
 
@@ -377,3 +381,4 @@ void setMaterial(const GLfloat* ambient, const GLfloat* diffuse, const GLfloat* 
 	glMaterialfv(GL_FRONT, GL_EMISSION, emission);
 	glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, shiniess);
 }
+
