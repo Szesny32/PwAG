@@ -44,7 +44,7 @@ static GLint locTimeFlow;
 
 static float fTime;
 static float fTimeFlow;
-
+static float rotTime;
 
 
 //wskaźniki funkcji
@@ -177,7 +177,7 @@ void setShaders(char* vertexShaderFile, char* fragmentShaderFile, char* geom)
 	//dodanie shaderów do programu
 	glAttachShader(programHandle, vertexShaderHandle);
 	glAttachShader(programHandle, fragmentShaderHandle);
-	//glAttachShader(programHandle, geomShaderHandle);
+	glAttachShader(programHandle, geomShaderHandle);
 
 	/* link */
 	//uruchomienie
@@ -202,6 +202,7 @@ void setShaders(char* vertexShaderFile, char* fragmentShaderFile, char* geom)
 
 	fTime = 0;
 	fTimeFlow = 0;
+	rotTime = 0;
 }
 
 
@@ -221,7 +222,7 @@ void drawScene(void)
 
 
 	glm::mat4 Tr = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -5.0f));
-	glm::mat4 Rt = glm::rotate(glm::mat4(1.0f), glm::radians(30.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+	glm::mat4 Rt = glm::rotate(glm::mat4(1.0f), glm::radians(30.0f + rotTime), glm::vec3(0.0f, 1.0f, 0.0f));
 
 	// Our ModelViewProjection
 	glm::mat4 mvp = Projection * Tr * Rt; // Remember, matrix multiplication is the other way around
@@ -250,8 +251,9 @@ void drawScene(void)
 	glutPostRedisplay();
 
 	glDisableVertexAttribArray(0);
-	
-	fTimeFlow += 0.0001;
+	if(rotTime >330)
+		fTimeFlow += 0.0005;
+	rotTime += 0.01f;
 
 }
 
