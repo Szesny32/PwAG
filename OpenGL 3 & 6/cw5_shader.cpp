@@ -96,7 +96,7 @@ vector<glm::vec3> normalsOBJ;
 vector<GLushort> elementsOBJ;
 
 //identyfikatory buforow
-GLuint vbo = 0;
+GLuint vbo[2] = { 0 };
 
 
 //TROJKAT
@@ -111,13 +111,16 @@ void prepereBuffors()
 {
 	//według zaleceń powinno się jeszcze zastosowac Vertex Array Object do zapamietania polozenia/konfiguracji
 	//wszystkich atrybutów wierzchołków (layout) (dane wierzchołków w VBO, a VBO w VBA)
-	glGenBuffers(1, &vbo);
-	glBindBuffer(GL_ARRAY_BUFFER, vbo);
+	glGenBuffers(2, vbo);
 
-	//bool res = loadOBJ("suzanne.obj", verticesOBJ, uvsOBJ, normalsOBJ);
+	bool res = loadOBJ("suzanne.obj", verticesOBJ, uvsOBJ, normalsOBJ);
+	if (res) {
+		glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
+		glBufferData(GL_ARRAY_BUFFER, verticesOBJ.size() * sizeof(glm::vec3), verticesOBJ.data(), GL_STATIC_DRAW);
 
-	glBufferData(GL_ARRAY_BUFFER, 9 * sizeof (float), points, GL_STATIC_DRAW);
-
+		glBindBuffer(GL_ARRAY_BUFFER, vbo[1]);
+		glBufferData(GL_ARRAY_BUFFER, normalsOBJ.size() * sizeof(glm::vec3), normalsOBJ.data(), GL_STATIC_DRAW);
+	}
 }
 
 
@@ -224,13 +227,16 @@ void drawScene(void)
 
 	glUniform1f(locTime, fTime);
 
-	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	glEnableVertexAttribArray(0);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
 
+	glEnableVertexAttribArray(1);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo[1]);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, NULL);
 	
 
-	glDrawArrays(GL_TRIANGLES, 0, 9);
+	glDrawArrays(GL_TRIANGLES, 0, verticesOBJ.size() * sizeof(glm::vec3));
 	
 	glutSwapBuffers();
 	glutPostRedisplay();
