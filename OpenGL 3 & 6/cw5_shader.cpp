@@ -40,8 +40,10 @@ static int geomShaderHandle; // obiekt shadera fragmentów
 //zmienne uniform
 static GLint locMVP;
 static GLint locTime;
+static GLint locTimeFlow;
 
 static float fTime;
+static float fTimeFlow;
 
 
 
@@ -196,8 +198,10 @@ void setShaders(char* vertexShaderFile, char* fragmentShaderFile, char* geom)
 
 	locMVP = glGetUniformLocation(programHandle, "MVP");
 	locTime = glGetUniformLocation(programHandle, "time");
+	locTimeFlow = glGetUniformLocation(programHandle, "timeFlow");
 
 	fTime = 0;
+	fTimeFlow = 0;
 }
 
 
@@ -227,6 +231,10 @@ void drawScene(void)
 
 	glUniform1f(locTime, fTime);
 
+
+	glUniform1f(locTimeFlow, fTimeFlow);
+
+
 	glEnableVertexAttribArray(0);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
@@ -243,7 +251,7 @@ void drawScene(void)
 
 	glDisableVertexAttribArray(0);
 	
-
+	fTimeFlow += 0.0001;
 
 }
 
