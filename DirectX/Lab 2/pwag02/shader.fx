@@ -2,12 +2,14 @@
 struct VertexIn
 {
 	float3 PosL  : POSITION;
+	float3 ColL  : COLOR;
 	//dodaj kolor
 };
 
 struct VertexOut
 {
 	float4 PosH  : SV_POSITION;
+	float4 ColH  : COLOR;
 	//dodaj kolor
 };
 
@@ -27,11 +29,12 @@ VertexOut VS_Main(VertexIn vin)
 
 	// Transform to homogeneous clip space.
 	vout.PosH = mul(float4(vin.PosL, 1.0f), worldViewProjection);
+	vout.ColH = float4(vin.ColL, 1.0f);
 
 	return vout;
 }
 
 float4 PS_Main(VertexOut pin) : SV_Target
 {
-	return float4(1.0f, 0.0f, 0.0f, 1.0f); //Zadanie 2.1.3 wyswietl kolor
+	return pin.ColH; //Zadanie 2.1.3 wyswietl kolor
 }

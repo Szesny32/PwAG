@@ -337,18 +337,22 @@ void RenderWidget::UpdateViewport(unsigned int width, unsigned int height)
 void RenderWidget::CreateConstantBuffers()
 {
 	auto bufferByteSize = DirectXHelper::CalcConstantBufferByteSize(sizeof(CameraConstants));
-	/*
+	
 	//Zadanie 2.2.1 Tworzenie bufora stalych
+	ID3D12Resource* m_cbViewProjectionMatrix;
+
 	ThrowIfFailed(m_dxDevice->CreateCommittedResource(
-		&CD3DX12_HEAP_PROPERTIES(??),
+		&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD),
 		D3D12_HEAP_FLAG_NONE,
-		&CD3DX12_RESOURCE_DESC::Buffer(buffer byte size),
+		&CD3DX12_RESOURCE_DESC::Buffer(bufferByteSize),
 		D3D12_RESOURCE_STATE_GENERIC_READ,
 		nullptr,
-		IID_PPV_ARGS(&??)));
+		IID_PPV_ARGS(&m_cbViewProjectionMatrix)));
+	void* mappedData = nullptr;
+	ThrowIfFailed(m_cbViewProjectionMatrix->Map(0, nullptr, &mappedData));
 
-	ThrowIfFailed(m_cbViewProjectionMatrix->Map(??));
-	*/
+	m_cbViewProjectionMatrix->Unmap(0, nullptr);
+	
 }
 
 
@@ -490,7 +494,8 @@ void RenderWidget::CreateGraphicPipeline()
 {
 	//Zadanie 2.1.2 - Input layout
 	std::vector<D3D12_INPUT_ELEMENT_DESC> inputLayout = {
-	{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 }
+	{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 }, 
+	{ "COLOR", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 }
 	};
 
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC psoDesc;

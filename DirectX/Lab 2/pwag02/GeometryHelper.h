@@ -8,8 +8,9 @@ namespace Geometry
 	//Zadanie 2.1.1 - wierzcholki
 	struct Vertex
 	{
-		Vertex(DirectX::XMFLOAT3 position) :Position(position){}
+		Vertex(DirectX::XMFLOAT3 position, DirectX::XMFLOAT3 color) :Position(position), Color(color){}
 		DirectX::XMFLOAT3 Position;
+		DirectX::XMFLOAT3 Color;
 	};
 
 	using VertexBuffer = std::vector<Vertex>;
@@ -19,14 +20,14 @@ namespace Geometry
 	{
 		std::vector<Vertex> vertices =
 		{
-			Vertex({ DirectX::XMFLOAT3(-1.0f, -1.0f, -1.0f) }),
-			Vertex({ DirectX::XMFLOAT3(-1.0f, +1.0f, -1.0f) }),
-			Vertex({ DirectX::XMFLOAT3(+1.0f, +1.0f, -1.0f) }),
-			Vertex({ DirectX::XMFLOAT3(+1.0f, -1.0f, -1.0f) }),
-			Vertex({ DirectX::XMFLOAT3(-1.0f, -1.0f, +1.0f) }),
-			Vertex({ DirectX::XMFLOAT3(-1.0f, +1.0f, +1.0f) }),
-			Vertex({ DirectX::XMFLOAT3(+1.0f, +1.0f, +1.0f) }),
-			Vertex({ DirectX::XMFLOAT3(+1.0f, -1.0f, +1.0f) })
+			Vertex({ DirectX::XMFLOAT3(-1.0f, -1.0f, -1.0f) }, {DirectX::XMFLOAT3(0.0f, 0.0f, 1.0f) }),
+			Vertex({ DirectX::XMFLOAT3(-1.0f, +1.0f, -1.0f) }, {DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f) }),
+			Vertex({ DirectX::XMFLOAT3(+1.0f, +1.0f, -1.0f) }, {DirectX::XMFLOAT3(1.0f, 0.0f, 1.0f) }),
+			Vertex({ DirectX::XMFLOAT3(+1.0f, -1.0f, -1.0f) }, {DirectX::XMFLOAT3(1.0f, 1.0f, 1.0f) }),
+			Vertex({ DirectX::XMFLOAT3(-1.0f, -1.0f, +1.0f) }, {DirectX::XMFLOAT3(1.0f, 1.0f, 0.0f) }),
+			Vertex({ DirectX::XMFLOAT3(-1.0f, +1.0f, +1.0f) }, {DirectX::XMFLOAT3(0.0f, 1.0f, 0.0f) }),
+			Vertex({ DirectX::XMFLOAT3(+1.0f, +1.0f, +1.0f) }, {DirectX::XMFLOAT3(0.0f, 1.0f, 1.0f) }),
+			Vertex({ DirectX::XMFLOAT3(+1.0f, -1.0f, +1.0f) }, {DirectX::XMFLOAT3(1.0f, 0.0f, 0.0f) })
 		};
 
 		std::vector<std::uint16_t> indices =
