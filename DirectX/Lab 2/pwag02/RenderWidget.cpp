@@ -1,6 +1,8 @@
 #include "Renderwidget.h"
 
 
+ID3D12Resource* m_cbViewProjectionMatrix;
+
 RenderWidget::RenderWidget(unsigned int width, unsigned int height, HWND hWnd)
 	:m_width(width), m_height(height), m_hWnd(hWnd)
 {
@@ -9,7 +11,7 @@ RenderWidget::RenderWidget(unsigned int width, unsigned int height, HWND hWnd)
 
 RenderWidget::~RenderWidget()
 {
-	//Unmap buffers
+	m_cbViewProjectionMatrix->Unmap(0, nullptr);
 }
 
 void RenderWidget::Initialize()
@@ -339,7 +341,6 @@ void RenderWidget::CreateConstantBuffers()
 	auto bufferByteSize = DirectXHelper::CalcConstantBufferByteSize(sizeof(CameraConstants));
 	
 	//Zadanie 2.2.1 Tworzenie bufora stalych
-	ID3D12Resource* m_cbViewProjectionMatrix;
 
 	ThrowIfFailed(m_dxDevice->CreateCommittedResource(
 		&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD),
@@ -347,11 +348,8 @@ void RenderWidget::CreateConstantBuffers()
 		&CD3DX12_RESOURCE_DESC::Buffer(bufferByteSize),
 		D3D12_RESOURCE_STATE_GENERIC_READ,
 		nullptr,
-		IID_PPV_ARGS(&m_cbViewProjectionMatrix)));
-	void* mappedData = nullptr;
-	ThrowIfFailed(m_cbViewProjectionMatrix->Map(0, nullptr, &mappedData));
+		IID_PPV_ARGS(&my_constantBuffer)));
 
-	m_cbViewProjectionMatrix->Unmap(0, nullptr);
 	
 }
 
@@ -360,11 +358,11 @@ void RenderWidget::BuildRootSignature()
 {
 	//Zadanie 2.2.2 Root Signature
 	// Root parameter can be a table, root descriptor or root constants.
-	//CD3DX12_ROOT_PARAMETER slotRootParameter[1];
-	//slotRootParameter[0].InitAsConstantBufferView(0);
+	CD3DX12_ROOT_PARAMETER slotRootParameter[1];
+	slotRootParameter[0].InitAsConstantBufferView(0);
 ;
 	// A root signature is an array of root parameters.
-	CD3DX12_ROOT_SIGNATURE_DESC rootSigDesc(0, nullptr, 0, nullptr,
+	CD3DX12_ROOT_SIGNATURE_DESC rootSigDesc(1, slotRootParameter, 0, nullptr,
 		D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
 
 	// create a root signature with a single slot which points to a descriptor range consisting of a single constant buffer
@@ -493,6 +491,7 @@ void RenderWidget::LoadGeometry()
 void RenderWidget::CreateGraphicPipeline()
 {
 	//Zadanie 2.1.2 - Input layout
+	//3 (RGB) * 4 (MB) = 12
 	std::vector<D3D12_INPUT_ELEMENT_DESC> inputLayout = {
 	{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 }, 
 	{ "COLOR", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 }
@@ -559,6 +558,11 @@ void RenderWidget::UpdateViewProjectionCBuffer()
 
 	//Zadanie 2.2.4 - zmiana zawartosci bufora stalych
 	//TODO: copy objectConstant object to the world matrix constant buffer
+	void* constantBufferAdress;
+	ThrowIfFailed(my_constantBuffer->Map(0, nullptr, &constantBufferAdress));
+	memcpy(constantBufferAdress, &cameraConstants, sizeof(cameraConstants));
+	my_constantBuffer->Unmap(0, nullptr);
+
 }
 
 void RenderWidget::Draw()
@@ -579,7 +583,10 @@ void RenderWidget::Draw()
 
 	//Zadanie 2.2.3 - podpiecie bufora do potoku renderujacego
 	// Setup constant buffers here:
+	// 
 	//TODO: use the SetGraphicsRootConstantBufferView function to setup constant buffers
+	m_commandList->SetGraphicsRootConstantBufferView(0, my_constantBuffer.Get()->GetGPUVirtualAddress());
+
 
 	// Input Assembly stage
 	m_commandList->IASetVertexBuffers(0, 1, &VertexBuffer.VertexBufferView());
