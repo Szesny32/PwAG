@@ -96,7 +96,8 @@ private:
 
     //Constant buffers
     void CreateConstantBuffers();
-    Microsoft::WRL::ComPtr<ID3D12Resource> my_constantBuffer;
+    Microsoft::WRL::ComPtr<ID3D12Resource> viewPojectionConstantBuffer;
+    Microsoft::WRL::ComPtr<ID3D12Resource> worldConstantBuffer;
 
     //Shaders
     void CompileShaders();

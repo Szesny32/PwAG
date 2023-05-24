@@ -29,6 +29,11 @@ cbuffer cbCamera : register(b0)
 	float4x4 gProjMatrix;
 };
 
+cbuffer cbCamera : register(b1)
+{
+	float4x4 gWorldMatrix;
+};
+
 VertexOut VS_Main(VertexIn vin)
 {
 	VertexOut vout;
@@ -46,8 +51,9 @@ VertexOut VS_Main(VertexIn vin)
 	//	0.00, 0.00, 4.00, 5.00
 	//);
 
-	float4x4 worldViewProjection = mul(gViewMatrix, gProjMatrix);
-
+	//float4x4 worldViewProjection = mul(gViewMatrix, gProjMatrix);
+	float4x4 worldViewProjection = mul(gWorldMatrix,mul(gViewMatrix, gProjMatrix));
+	
 	// Transform to homogeneous clip space.
 	vout.PosH = mul(float4(vin.PosL, 1.0f), worldViewProjection);
 	vout.ColH = float4(vin.ColL, 1.0f);
